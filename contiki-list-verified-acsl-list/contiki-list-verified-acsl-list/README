@@ -1,0 +1,94 @@
+================================================================================
+ List module of Contiki proved using Frama-C/WP
+   Method: ACSL logic lists
+================================================================================
+
+Required versions of the tools:
+
+    - Frama-C 18 - Argon
+    - Coq 8.7.2
+    - Alt-Ergo 2.20
+    - CVC4 1.6
+    - Why3 0.88.3
+
+Content:
+
+    - list_*.c files:
+        annotated source code of Contiki
+    - list.h list.c:
+        Lists with a "int" field
+    - list_ptr.h list_ptr.c:
+        Lists with a "void*" field
+    - list_point.h list_point.c:
+        Lists with a "struct point" field
+    - logic_def.h:
+        Logic definitions (linked_ll, to_logic_list, and some predicates)
+    - lemmas.h:
+        All lemmas needed for the proofs
+    - all_lemmas_proofs.script:
+	Frama-C script for all coq proofs
+    - coq_proofs:
+        This folder contains a copy of each Coq proof with its context.
+	These files are more convenient for proof review.
+    - user_code_tests:
+	Two files containing valid and invalid annotated user code.
+
+Start a verification of the proofs:
+
+    The proof can be executed using a command:
+
+    $ ./verification_script.h
+
+    By default, it will execute:
+
+    - the proof of the lemmas
+    - the proof of the functions
+    - the proof of the valid user code tests
+
+    On the three different data structure.
+
+    To see all the options of this script, the option -help can be passed:
+
+    $ ./verification_script.sh -help
+
+    It is possible to execute the proofs on only one data-structure using:
+
+    $ ./verification_script.h -only-one-structure
+
+    And to ask for the invalid user code to be "tried" (and failed) by using:
+
+    $ ./verification_script.h -with-invalid-tests
+
+    And, of course, to combine them (in any order):
+
+    $ ./verification_script.h -only-one-structure -with-invalid-tests
+
+================================================
+    IMPORTANT
+================================================
+    Note that with a weak machine and a single thread, the verification can
+    take 12 hours or more for ONE data structure, without the invalid tests.
+    In invalid tests, 45 proof obligations fail, each one must wait the 20
+    minutes timeout of the SMT solvers (Alt-Ergo and CVC4). So 45*2*20
+    minutes. This timeout can be reduced in the file:
+
+    ./user_code_tests/script.sh
+
+    However, a too short timeout could lead to more that 45 failed goals. We
+    observed that on the machine presented in next section, a 10 minutes
+    timeout is not enough in a native configuration.
+
+================================================
+    ABOUT THE RESULTS INDICATED IN THE PAPER
+================================================
+    The results in terms of computation are obtained on native platform with 
+    the following configuration for machine and files:
+
+    Intel i7 6700HQ
+    16Go DDR4
+
+    Number of processes = 8 in the verification script.
+
+    Command line:
+
+    $ ./verification-script -only-one-structure -without-valid-tests
